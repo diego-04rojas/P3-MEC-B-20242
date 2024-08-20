@@ -1,0 +1,46 @@
+##Qué palabra clave se usa para definir una clase en Java?
+{
+~object
+=class
+~structure
+}
+##¿Cuál de los siguientes conceptos permite que una subclase herede métodos y propiedades de una superclase?
+{
+~Polimorfismo
+=Herencia
+~Encapsulamiento
+}
+##¿Qué palabra clave se utiliza para prevenir que una clase sea extendida por otras clases?
+{
+~static
+=final
+~private
+}
+##En Java, ¿qué palabra clave se usa para acceder a los miembros de la clase desde dentro de la misma clase?
+{
+=this
+~super
+~public
+}
+##¿Cuál de los siguientes conceptos de la POO permite que un objeto se comporte de diferentes maneras según su tipo?
+{
+~Herencia
+=Polimorfismo
+~Abstracción
+}
+##¿Qué palabra clave se utiliza para ocultar detalles internos y exponer solo la interfaz pública de una clase?
+{
+~protected
+=private
+~public
+}
+##¿Qué tipo de método se usa para inicializar un objeto en Java?
+=Constructor
+~Destructor
+~Getter
+}
+##En Java, una clase puede heredar de más de una clase al mismo tiempo.{F}
+##El concepto de encapsulamiento en Java se refiere a la habilidad de un objeto de almacenar su estado interno y ofrecer métodos para modificar y acceder a dicho estado.{T}
+##Un método static en Java puede acceder a los miembros no estáticos de su clase.{F}
+
+
