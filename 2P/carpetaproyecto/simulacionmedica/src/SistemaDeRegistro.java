@@ -109,5 +109,53 @@ public class SistemaDeRegistro extends JFrame {
         panelAtencion.add(lblSiguientePaciente);
 
         panelDerecho.add(panelAtencion, BorderLayout.NORTH);
+                // Título para la lista de pacientes
+                JLabel lblTituloCola = new JLabel("Lista de Pacientes", SwingConstants.CENTER);
+                lblTituloCola.setFont(new Font("Arial", Font.BOLD, 14));
+                panelDerecho.add(lblTituloCola, BorderLayout.CENTER);
+        
+                // Tabla de pacientes
+                String[] columnas = {"Identificación", "Hora de Registro"};
+                modeloTabla = new DefaultTableModel(columnas, 0);
+                tablaPacientes = new JTable(modeloTabla);
+                panelDerecho.add(new JScrollPane(tablaPacientes), BorderLayout.SOUTH);
+        
+                panelPrincipal.add(panelDerecho);
+        
+                btnAgregarPaciente.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        agregarPaciente();
+                    }
+                });
+        
+                sliderDuracionTurno.addChangeListener(new ChangeListener() {
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        int duracionTurno = sliderDuracionTurno.getValue();
+                        lblDuracionSlider.setText("Duración por turno: " + duracionTurno + " segundos");
+                    }
+                });
+        
+                timer = new Timer(10000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        atenderPaciente();
+                    }
+                });
+            }
+        
+            private void agregarPaciente() {
+                String identificacion = txtIdentificacion.getText();
+                String grupoEtario = (String) cmbGrupoEtario.getSelectedItem();
+                String tipoServicio = (String) cmbTipoServicio.getSelectedItem();
+                LocalTime horaRegistro = LocalTime.now();
+        
+                if (identificacion.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Ingresa la identificación.");
+                    return;
+                }
+                
+        
         
 
