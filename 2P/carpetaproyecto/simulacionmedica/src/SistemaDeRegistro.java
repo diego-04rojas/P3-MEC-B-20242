@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import javax.swing.Timer;
 
 public class SistemaDeRegistro extends JFrame {
     private JTextField txtIdentificacion;
@@ -66,3 +65,49 @@ public class SistemaDeRegistro extends JFrame {
             public void changedUpdate(DocumentEvent e) {
                 validarIdentificacion();
             }
+                @Override
+            public void removeUpdate(DocumentEvent e) {
+                validarIdentificacion();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                validarIdentificacion();
+            }
+
+            private void validarIdentificacion() {
+                String texto = txtIdentificacion.getText();
+                if (!texto.matches("\\d*")) {
+                    JOptionPane.showMessageDialog(null, "La identificación debe ser numérica.");
+                    txtIdentificacion.setText(texto.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        panelEntrada.add(new JLabel("Identificación:"));
+        panelEntrada.add(txtIdentificacion);
+        panelEntrada.add(new JLabel("Grupo Etario:"));
+        panelEntrada.add(cmbGrupoEtario);
+        panelEntrada.add(new JLabel("Tipo de Servicio:"));
+        panelEntrada.add(cmbTipoServicio);
+        panelEntrada.add(lblTotalPacientes);
+        panelEntrada.add(lblDuracionSlider);
+        panelEntrada.add(sliderDuracionTurno);
+        panelEntrada.add(btnAgregarPaciente);
+
+        panelPrincipal.add(panelEntrada);
+
+        JPanel panelDerecho = new JPanel(new BorderLayout());
+
+        // Etiquetas para el paciente actual y el siguiente
+        JPanel panelAtencion = new JPanel(new GridLayout(2, 1));
+        lblPacienteActual = new JLabel("Paciente actual: Ninguno", SwingConstants.CENTER);
+        lblPacienteActual.setFont(new Font("Arial", Font.BOLD, 14));
+        lblSiguientePaciente = new JLabel("Siguiente paciente: Ninguno", SwingConstants.CENTER);
+        lblSiguientePaciente.setFont(new Font("Arial", Font.PLAIN, 12));
+        panelAtencion.add(lblPacienteActual);
+        panelAtencion.add(lblSiguientePaciente);
+
+        panelDerecho.add(panelAtencion, BorderLayout.NORTH);
+        
+
