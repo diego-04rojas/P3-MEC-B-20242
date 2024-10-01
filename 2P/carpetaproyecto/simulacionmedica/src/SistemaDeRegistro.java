@@ -65,15 +65,6 @@ public class SistemaDeRegistro extends JFrame {
             public void changedUpdate(DocumentEvent e) {
                 validarIdentificacion();
             }
-                @Override
-            public void removeUpdate(DocumentEvent e) {
-                validarIdentificacion();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                validarIdentificacion();
-            }
 
             private void validarIdentificacion() {
                 String texto = txtIdentificacion.getText();
@@ -109,53 +100,136 @@ public class SistemaDeRegistro extends JFrame {
         panelAtencion.add(lblSiguientePaciente);
 
         panelDerecho.add(panelAtencion, BorderLayout.NORTH);
-                // Título para la lista de pacientes
-                JLabel lblTituloCola = new JLabel("Lista de Pacientes", SwingConstants.CENTER);
-                lblTituloCola.setFont(new Font("Arial", Font.BOLD, 14));
-                panelDerecho.add(lblTituloCola, BorderLayout.CENTER);
-        
-                // Tabla de pacientes
-                String[] columnas = {"Identificación", "Hora de Registro"};
-                modeloTabla = new DefaultTableModel(columnas, 0);
-                tablaPacientes = new JTable(modeloTabla);
-                panelDerecho.add(new JScrollPane(tablaPacientes), BorderLayout.SOUTH);
-        
-                panelPrincipal.add(panelDerecho);
-        
-                btnAgregarPaciente.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        agregarPaciente();
-                    }
-                });
-        
-                sliderDuracionTurno.addChangeListener(new ChangeListener() {
-                    @Override
-                    public void stateChanged(ChangeEvent e) {
-                        int duracionTurno = sliderDuracionTurno.getValue();
-                        lblDuracionSlider.setText("Duración por turno: " + duracionTurno + " segundos");
-                    }
-                });
-        
-                timer = new Timer(10000, new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        atenderPaciente();
-                    }
-                });
-            }
-        
-            private void agregarPaciente() {
-                String identificacion = txtIdentificacion.getText();
-                String grupoEtario = (String) cmbGrupoEtario.getSelectedItem();
-                String tipoServicio = (String) cmbTipoServicio.getSelectedItem();
-                LocalTime horaRegistro = LocalTime.now();
-        
-                if (identificacion.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Ingresa la identificación.");
-                    return;
-                }
-                
-        
-        
 
+        // Título para la lista de pacientes
+        JLabel lblTituloCola = new JLabel("Lista de Pacientes", SwingConstants.CENTER);
+        lblTituloCola.setFont(new Font("Arial", Font.BOLD, 14));
+        panelDerecho.add(lblTituloCola, BorderLayout.CENTER);
+
+        // Tabla de pacientes
+        String[] columnas = {"Identificación", "Hora de Registro"};
+        modeloTabla = new DefaultTableModel(columnas, 0);
+        tablaPacientes = new JTable(modeloTabla);
+        panelDerecho.add(new JScrollPane(tablaPacientes), BorderLayout.SOUTH);
+
+        panelPrincipal.add(panelDerecho);
+
+        btnAgregarPaciente.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                agregarPaciente();
+            }
+        });
+
+        sliderDuracionTurno.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int duracionTurno = sliderDuracionTurno.getValue();
+                lblDuracionSlider.setText("Duración por turno: " + duracionTurno + " segundos");
+            }
+        });
+
+        timer = new Timer(10000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                atenderPaciente();
+            }
+        });
+    }
+
+    private void agregarPaciente() {
+        String identificacion = txtIdentificacion.getText();
+        String grupoEtario = (String) cmbGrupoEtario.getSelectedItem();
+        String tipoServicio = (String) cmbTipoServicio.getSelectedItem();
+        LocalTime horaRegistro = LocalTime.now();
+
+        if (identificacion.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingresa la identificación.");
+            return;
+        }
+
+        // Validar si la identificación ya está registrada
+        for (Paciente p : listaPacientes) {
+            if (p.getIdentificacion().equals(identificacion)) {
+                JOptionPane.showMessageDialog(this, "La cédula ya está registrada.");
+                return; // Salir del método si la identificación ya existe
+            }
+        }
+
+        Paciente nuevoPaciente = new Paciente(identificacion, grupoEtario, tipoServicio, horaRegistro);
+        listaPacientes.add(nuevoPaciente);
+        totalPacientes++;
+
+        lblTotalPacientes.setText("Pacientes registrados: " + totalPacientes);
+        modeloTabla.addRow(new Object[] {identificacion, horaRegistro});
+
+        if (totalPacientes == 10 && !modoAutomatico) {
+            activarModoAutomatico();
+        }
+    }
+
+    private void atenderPaciente() {
+        if (listaPacientes.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay pacientes en la lista.");
+            timer.stop();
+            modoAutomatico = false;
+            return;
+        }
+
+        Paciente pacienteAtendido = listaPacientes.remove(0);
+        lblPacienteActual.setText("<html>Paciente actual:<br>"
+            + "Identificación: " + pacienteAtendido.getIdentificacion() + "<br>"
+            + "Grupo Etario: " + pacienteAtendido.getGrupoEtario() + "<br>"
+            + "Servicio: " + pacienteAtendido.getTipoServicio() + "<br>"
+            + "Hora de registro: " + pacienteAtendido.getHoraRegistro() + "</html>");
+        
+        if (!listaPacientes.isEmpty()) {
+            lblSiguientePaciente.setText("Siguiente paciente: " + listaPacientes.get(0).getIdentificacion());
+        } else {
+            lblSiguientePaciente.setText("Siguiente paciente: Ninguno");
+        }
+    }
+
+    private void activarModoAutomatico() {
+        modoAutomatico = true;
+        timer.start();
+        JOptionPane.showMessageDialog(this, "Modo automático activado. Atención comenzará.");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SistemaDeRegistro registro = new SistemaDeRegistro();
+            registro.setVisible(true);
+        });
+    }
+}
+
+class Paciente {
+    private String identificacion;
+    private String grupoEtario;
+    private String tipoServicio;
+    private LocalTime horaRegistro;
+
+    public Paciente(String identificacion, String grupoEtario, String tipoServicio, LocalTime horaRegistro) {
+        this.identificacion = identificacion;
+        this.grupoEtario = grupoEtario;
+        this.tipoServicio = tipoServicio;
+        this.horaRegistro = horaRegistro;
+    }
+
+    public String getIdentificacion() {
+        return identificacion;
+    }
+
+    public String getGrupoEtario() {
+        return grupoEtario;
+    }
+
+    public String getTipoServicio() {
+        return tipoServicio;
+    }
+
+    public LocalTime getHoraRegistro() {
+        return horaRegistro;
+    }
+}
